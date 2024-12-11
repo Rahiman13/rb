@@ -48,8 +48,24 @@ const User = () => {
             progress: undefined,
         });
 
-        if (!localStorage.getItem('userId')) {
-            toast.info('Login to continue', {
+        // Separate promise for books
+        const loadBooks = async () => {
+            try {
+                await fetchBooks();
+            } finally {
+                setLoading(false); // Set loading to false after books are fetched
+            }
+        };
+
+        loadBooks(); // Start loading books immediately
+
+        // Only fetch user data if logged in
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            fetchUserData();
+            fetchAddresses(userId);
+        } else {
+            toast.info('Login to access all features', {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -59,10 +75,6 @@ const User = () => {
                 progress: undefined,
             });
         }
-
-        fetchBooks();
-        fetchUserData();
-        fetchAddresses();
     }, []);
 
     const fetchBooks = async () => {
@@ -80,6 +92,7 @@ const User = () => {
             }
         } catch (error) {
             console.error('Error fetching books:', error);
+            toast.error('Failed to fetch books. Please try again later.');
         }
     };
 
@@ -107,15 +120,12 @@ const User = () => {
             const response = await axios.get(`https://books-adda-backend.onrender.com/username/${userId}`);
             if (response.status === 200) {
                 setUserData(response.data);
-                fetchAddresses(userId); // Correctly fetch addresses
+                fetchAddresses(userId);
             } else {
                 console.error('Failed to fetch user data:', response.status);
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
-        }
-        finally {
-            setLoading(false); // Set loading to false after fetching
         }
     };
 
