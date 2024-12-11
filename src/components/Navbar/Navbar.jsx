@@ -20,10 +20,10 @@ const NavBar = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn && userId) {
+    if (userId) {
       fetchUsername(userId);
     }
-  }, [isLoggedIn, userId]);
+  }, [userId]);
 
   const fetchUsername = async (userId) => {
     try {
@@ -73,7 +73,7 @@ const NavBar = () => {
 
   return (
     <nav className="bg-white dark:bg-[#000080] fixed w-full z-[999] top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-      <div className="max-w-screen-xl flex flex-wrap py-4 items-center justify-between mx-auto px-3">
+      <div className="max-w-screen-xl flex flex-wrap py-3 items-center justify-between mx-auto px-3">
         <div className="">
           <Link to="/" className="flex items-center overflow-x-hidden space-x-3 rtl:space-x-reverse">
             {/* <img src={logo} className="h-24 w-22 overflow-x-hidden p-0" alt="Books Adda Logo" /> */}
@@ -86,21 +86,17 @@ const NavBar = () => {
         <div className="flex gap-5">
           <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
             <div className="flex flex-col">
-              {isLoggedIn ? (
+              {userId ? (
                 <button
                   onClick={handleLogout}
-                  // className="text-blue-700 bg-transparent hover:bg-[#fff] focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-4 py-2 text-center dark:bg-white dark:hover:bg-[#e2e8f0] dark:focus:ring-blue-800"
-                  className="w-full text-blue-700 bg-transparent border border-transparent hover:bg-[#000] focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-4 py-2 text-center dark:bg-white dark:hover:text-white dark:hover:bg-[#000] dark:hover:border border-white dark:focus:ring-blue-800"
-
+                  className="relative overflow-hidden px-6 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:ring-2 focus:ring-blue-400"
                 >
                   Logout
                 </button>
               ) : (
                 <NavLink
                   to="/login"
-                  // className="text-blue-700 bg-transparent hover:bg-[#fff] focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-4 py-2 text-center dark:bg-white dark:hover:bg-[#e2e8f0] dark:focus:ring-blue-800"
-                  className="w-full text-blue-700 bg-transparent hover:bg-[#000] border border-transparent focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-lg px-4 py-2 text-center dark:bg-white dark:hover:text-white dark:hover:bg-[#000] dark:hover:border border-white dark:focus:ring-blue-800"
-
+                  className="relative overflow-hidden px-6 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:ring-2 focus:ring-blue-400"
                 >
                   Login
                 </NavLink>

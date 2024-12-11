@@ -15,13 +15,13 @@ import ReactPaginate from 'react-paginate';
 import { BsHeart, BsHeartFill, BsSearch } from 'react-icons/bs';
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { Typewriter } from 'react-simple-typewriter';
-import Testimonials from './testimonials';
 import Services from './services';
 import Gallery from './gallery';
+import Testimonials from './testimonials';
 import emailjs from 'emailjs-com';
 import AddressModal from './AddressModal';
-import { toast } from 'react-toastify';
-import ContentLoader from 'react-content-loader';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const User = () => {
     const [books, setBooks] = useState([]);
@@ -38,11 +38,31 @@ const User = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        toast.info('Fetching data, please wait. The backend is hosted on a free platform, so it might take a while.', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+
+        if (!localStorage.getItem('userId')) {
+            toast.info('Login to continue', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+        }
+
         fetchBooks();
         fetchUserData();
         fetchAddresses();
-        setAddresses;
-
     }, []);
 
     const fetchBooks = async () => {
@@ -63,8 +83,6 @@ const User = () => {
         }
     };
 
-
-
     const fetchAddresses = async (userId) => {
         try {
             const response = await axios.get(`https://books-adda-backend.onrender.com/address/${userId}`);
@@ -78,8 +96,6 @@ const User = () => {
             console.error('Error fetching addresses:', error);
         }
     };
-
-
 
     const fetchUserData = async () => {
         const userId = localStorage.getItem('userId');
@@ -103,8 +119,6 @@ const User = () => {
         }
     };
 
-
-
     const handleAddAddress = async (address) => {
         const userId = localStorage.getItem('userId');
         try {
@@ -119,7 +133,6 @@ const User = () => {
             console.error('Error adding address:', error);
         }
     };
-
 
     const handleEditAddress = async (addressId, updatedAddress) => {
         try {
@@ -166,20 +179,120 @@ const User = () => {
 
     const handleViewMore = (book) => {
         Swal.fire({
-            title: book.title,
+            title: '',
             html: `
-                <div style="text-align: left;">
-                    <p><strong style="font-size: 18px; font-weight: semibold;">Summary:</strong></p>
-                    <p>${book.summary}</p>
+                <div class="max-w-4xl mx-auto p-6">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <!-- Book Image Section -->
+                        <div class="w-full md:w-1/3">
+                            <div class="relative group">
+                                <img 
+                                    src="${book.imageUrl}" 
+                                    alt="${book.title}" 
+                                    class="w-full h-auto rounded-lg shadow-xl transform transition-transform duration-500 group-hover:scale-105"
+                                />
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+                            </div>
+                            <div class="mt-4 flex justify-center gap-4">
+                                <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                                    ${book.genre}
+                                </span>
+                                <span class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                                    ${book.copiesAvailable} copies left
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Book Details Section -->
+                        <div class="w-full md:w-2/3">
+                            <h2 class="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                ${book.title}
+                            </h2>
+                            <p class="text-lg text-gray-600 mb-4">by <span class="font-semibold">${book.author}</span></p>
+                            
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="text-2xl font-bold text-gray-900">₹${book.price}</div>
+                                ${book.originalPrice ? 
+                                    `<div class="text-lg text-gray-500 line-through">₹${book.originalPrice}</div>` 
+                                    : ''
+                                }
+                                ${book.originalPrice ? 
+                                    `<div class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
+                                        ${Math.round((1 - book.price/book.originalPrice) * 100)}% OFF
+                                    </div>` 
+                                    : ''
+                                }
+                            </div>
+
+                            <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                                <h3 class="text-xl font-semibold mb-3 text-gray-800">Summary</h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    ${book.summary}
+                                </p>
+                            </div>
+
+                            <div class="bg-blue-50 rounded-xl p-6">
+                                <h3 class="text-xl font-semibold mb-3 text-blue-800">Key Features</h3>
+                                <ul class="grid grid-cols-2 gap-4">
+                                    <li class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span>Premium Quality Print</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span>Fast Delivery</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span>Money Back Guarantee</span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span>24/7 Support</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `,
-            imageUrl: book.imageUrl,
-            imageWidth: 400,
-            imageHeight: 400,
-            imageAlt: 'Book cover',
-            confirmButtonText: 'Close',
+            showCloseButton: true,
+            showConfirmButton: false,
             showCancelButton: true,
-            cancelButtonText: 'Buy',
+            cancelButtonText: 'Buy Now',
+            cancelButtonColor: '#10B981',
+            width: '80%',
+            padding: '2rem',
+            background: '#ffffff',
+            backdrop: `
+                rgba(0,0,0,0.4)
+                left top
+                no-repeat
+            `,
+            customClass: {
+                container: 'custom-swal-container',
+                popup: 'custom-swal-popup',
+                cancelButton: 'custom-swal-cancel-button'
+            },
+            didOpen: () => {
+                // Add custom styles to SweetAlert elements
+                const popup = Swal.getPopup();
+                popup.style.borderRadius = '1rem';
+                
+                const cancelButton = Swal.getCancelButton();
+                cancelButton.style.borderRadius = '0.5rem';
+                cancelButton.style.padding = '0.75rem 2rem';
+                cancelButton.style.fontSize = '1.1rem';
+                cancelButton.style.fontWeight = '600';
+            }
         }).then((result) => {
             if (result.dismiss === Swal.DismissReason.cancel) {
                 handleBuy(book);
@@ -332,9 +445,6 @@ const User = () => {
         }
     };
 
-
-
-
     const handleToggleFavorite = (book) => {
         const userId = localStorage.getItem('userId');
 
@@ -417,125 +527,186 @@ const User = () => {
         }
     };
 
-    const ButtonGroup = ({ next, previous, goToSlide, ...rest }) => {
-        const {
-            carouselState: { currentSlide }
-        } = rest;
+    const CustomDot = ({ onClick, ...rest }) => {
+        const { active } = rest;
         return (
-            <div className="carousel-button-group">
-                <button onClick={() => previous()} className="bg-gray-800 text-white p-2 rounded-full">
-                    <MdArrowBackIos />
-                </button>
-                <button onClick={() => next()} className="bg-gray-800 text-white p-2 rounded-full">
-                    <MdArrowForwardIos />
-                </button>
-            </div>
+            <button
+                className={`h-2 w-2 md:h-3 md:w-3 mx-1 rounded-full transition-all duration-300 ${active ? "bg-blue-600 w-6 md:w-8" : "bg-gray-400"}`}
+                onClick={() => onClick()}
+            />
         );
     };
 
     return (
         <>
             <Navbar />
+            <ToastContainer />
             <div className="container-fluid mx-auto mt-24">
-                <Carousel
-                    responsive={responsive}
-                    showDots={true}
-                    autoPlay={true}
-                    autoPlaySpeed={3000}
-                    infinite={true}
-                    arrows={true}
-                    renderButtonGroupOutside={true}
-                    // customButtonGroup={<ButtonGroup />}
-                    containerClass="carousel-container"
-                    itemClass="carousel-item-padding-40-px"
-                >
-                    <div className="relative">
-                        <img src={lib1} alt="Library 1" className="w-full h-96 object-cover" />
-                    </div>
-                    <div className="relative">
-                        <img src={lib2} alt="Library 2" className="w-full h-96 object-cover" />
-                    </div>
-                    <div className="relative">
-                        <img src={lib3} alt="Library 3" className="w-full h-96 object-cover" />
-                    </div>
-                    <div className="relative">
-                        <img src={lib4} alt="Library 4" className="w-full h-96 object-cover" />
-                    </div>
-                </Carousel>
+                <div className="px-4 md:px-8 mb-12">
+                    <Carousel
+                        responsive={responsive}
+                        showDots={true}
+                        autoPlay={true}
+                        autoPlaySpeed={3000}
+                        infinite={true}
+                        arrows={true}
+                        customDot={<CustomDot />}
+                        containerClass="carousel-container overflow-hidden rounded-2xl shadow-2xl"
+                        itemClass="carousel-item-padding-40-px"
+                    >
+                        {imageUrls.map((item, index) => (
+                            <div key={index} className="relative h-[300px] md:h-[500px]">
+                                <img 
+                                    src={item.url} 
+                                    alt={`Library ${index + 1}`} 
+                                    className="w-full h-full object-cover brightness-75 transition-all duration-500 hover:brightness-100"
+                                />
+                                <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-8 bg-gradient-to-t from-black/60 to-transparent">
+                                    <motion.h2
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.6 }}
+                                        className="text-2xl md:text-4xl font-bold text-white mb-4 drop-shadow-lg"
+                                    >
+                                        {item.text}
+                                    </motion.h2>
+                                </div>
+                            </div>
+                        ))}
+                    </Carousel>
+                </div>
+
                 <div className="mt-6 px-8 pb-4">
-                    <div className="text-center mb-6">
-                        <h1 className="text-3xl font-semibold">
+                    <motion.div 
+                        className="text-center mb-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                             Welcome to Our Book's Adda
                         </h1>
-                        <p className="text-gray-600">
-                            <Typewriter words={['Discover your next great read...', 'Explore our collection...']} loop={false} cursor cursorStyle="_" typeSpeed={70} deleteSpeed={50} delaySpeed={1000} />
+                        <p className="text-gray-600 text-lg md:text-xl mt-2">
+                            <Typewriter 
+                                words={['Discover your next great read...', 'Explore our collection...']} 
+                                loop={false} 
+                                cursor 
+                                cursorStyle="_" 
+                                typeSpeed={70} 
+                                deleteSpeed={50} 
+                                delaySpeed={1000} 
+                            />
                         </p>
-                    </div>
-                    <div className="mb-6 flex justify-center">
-                        <input type="text" className="border rounded-lg py-2 px-4 w-full md:w-1/2 lg:w-1/3" placeholder="Search by title or author..." value={searchTerm} onChange={handleSearch} />
-                        <button className="ml-2 bg-blue-500 text-white rounded-lg py-2 px-4 flex items-center">
-                            <BsSearch className="mr-2" />
-                            Search
-                        </button>
+                    </motion.div>
+
+                    <div className="mb-8 flex justify-center">
+                        <div className="relative w-full md:w-2/3 lg:w-1/2">
+                            <input 
+                                type="text" 
+                                className="w-full py-3 px-12 rounded-full border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 shadow-md" 
+                                placeholder="Search by title or author..." 
+                                value={searchTerm} 
+                                onChange={handleSearch}
+                            />
+                            <BsSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4 sm:px-8">
                         {loading ? (
                             Array.from({ length: 8 }).map((_, index) => (
-                                <ContentLoader
-                                    key={index}
-                                    speed={2}
-                                    width={300}
-                                    height={400}
-                                    viewBox="0 0 300 400"
-                                    backgroundColor="#f3f3f3"
-                                    foregroundColor="#ecebeb"
-                                >
-                                    <rect x="0" y="0" rx="10" ry="10" width="300" height="400" />
-                                </ContentLoader>
+                                <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
+                                    <div className="h-48 bg-gradient-to-r from-gray-200 to-gray-300"></div>
+                                    <div className="p-4">
+                                        <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-3/4 mb-3"></div>
+                                        <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-1/2 mb-3"></div>
+                                        <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full w-2/3"></div>
+                                        <div className="mt-4 flex justify-between">
+                                            <div className="h-8 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg w-24"></div>
+                                            <div className="h-8 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg w-24"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             ))
                         ) : (
                             currentBooks.map((book) => (
                                 <motion.div
-                                key={book._id}
-                                className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300 ease-in-out"
-                                initial={{ opacity: 0, y: 50 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -50 }}
-                                layout
-                            >
-                                <div className="overflow-hidden">
-                                    <img src={book.imageUrl} alt={book.title} className="w-full h-48 object-cover hover:scale-110 transition ease-in" />
-                                </div>
-                                <div className="p-4">
-                                    <div className="flex justify-between">
-                                        <h2 className="text-xl sm:text-2xl font-bold italic mb-2">{book.title}</h2>
+                                    key={book._id}
+                                    className="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-all duration-500 ease-in-out hover:shadow-2xl relative group"
+                                    initial={{ opacity: 0, y: 50 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -50 }}
+                                    layout
+                                >
+                                    {/* Ribbon for bestseller or new arrival */}
+                                    {book.copiesAvailable < 5 && (
+                                        <div className="absolute top-4 -left-8 bg-red-500 text-white px-10 py-1 rotate-[-45deg] z-10 shadow-lg">
+                                            Limited Stock
+                                        </div>
+                                    )}
+                                    
+                                    <div className="relative overflow-hidden group h-64">
+                                        <img 
+                                            src={book.imageUrl} 
+                                            alt={book.title} 
+                                            className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-in-out"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6">
+                                            <p className="text-white text-sm line-clamp-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                                {book.summary}
+                                            </p>
+                                        </div>
                                         <button
-                                            className="text-red-500 hover:text-red-700 relative focus:outline-none"
+                                            className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm p-2 rounded-full text-red-500 hover:bg-white/40 transition-all duration-300 transform hover:scale-110"
                                             onClick={() => handleToggleFavorite(book)}
                                         >
-                                            {isFavorite(book._id) ? <BsHeartFill size={20} /> : <BsHeart size={20} />}
+                                            {isFavorite(book._id) ? 
+                                                <BsHeartFill size={20} className="filter drop-shadow-lg" /> : 
+                                                <BsHeart size={20} className="filter drop-shadow-lg" />
+                                            }
                                         </button>
                                     </div>
-                                    <p className="text-gray-600 mb-2"><strong className="text-md font-bold">Author:</strong> {book.author}</p>
-                                    <p className="text-gray-600 mb-2"><strong className="text-md font-bold">Copies Available:</strong> {book.copiesAvailable}</p>
-                                    <p className="text-gray-600 mb-2"><strong className="text-md font-bold">Price:</strong> ₹{book.price}</p>
-                                    <div className="flex justify-between">
-                                        <button
-                                            className="bg-blue-500 text-white px-4 py-2 font-semibold rounded mt-4 hover:bg-blue-700"
-                                            onClick={() => handleViewMore(book)}
-                                        >
-                                            View More
-                                        </button>
-                                        <button
-                                            className="bg-green-500 text-white px-4 py-2 font-semibold rounded mt-4 hover:bg-green-700"
-                                            onClick={() => handleBuy(book)}
-                                        >
-                                            Buy Now
-                                        </button>
+
+                                    <div className="p-6 bg-gradient-to-b from-white to-gray-50">
+                                        <div className="space-y-3">
+                                            <h2 className="text-xl font-bold text-gray-800 leading-tight line-clamp-2 hover:line-clamp-none transition-all duration-300">
+                                                {book.title}
+                                            </h2>
+                                            <div className="flex items-center space-x-2">
+                                                <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                                                    {book.genre}
+                                                </span>
+                                                <span className="text-gray-500 text-sm">by {book.author}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center space-x-2">
+                                                    <span className="text-2xl font-bold text-gray-900">₹{book.price}</span>
+                                                    {book.originalPrice && (
+                                                        <span className="text-sm text-gray-500 line-through">₹{book.originalPrice}</span>
+                                                    )}
+                                                </div>
+                                                <span className="text-sm text-gray-600">
+                                                    {book.copiesAvailable} left
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-6 flex gap-3">
+                                            <button
+                                                className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2.5 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center space-x-2"
+                                                onClick={() => handleViewMore(book)}
+                                            >
+                                                <span>View More</span>
+                                            </button>
+                                            <button
+                                                className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-2.5 rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-600 transition duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center space-x-2"
+                                                onClick={() => handleBuy(book)}
+                                            >
+                                                <span>Buy Now</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
                             ))
                         )}
                     </div>
@@ -569,7 +740,7 @@ const User = () => {
                     onSelect={handleSelectAddress}
                     onRequestClose={() => setIsAddressModalOpen(false)}
                 />
-            </div >
+            </div>
         </>
     );
 };

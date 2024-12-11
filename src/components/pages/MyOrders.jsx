@@ -223,52 +223,90 @@ const MyOrders = () => {
   return (
     <>
       <Navbar />
-      <div className="p-4 flex justify-center">
-        <div className="w-full">
-          <h1 className="text-3xl font-bold mb-6 mt-20 text-center">My Orders</h1>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold mb-8 mt-20 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+            My Orders & Addresses
+          </h1>
+          
           <div className="flex flex-col lg:flex-row gap-8">
-            <div className="flex flex-col">
-              <div className="max-w-lg w-full bg-white px-4 py-4 rounded-md shadow-md overflow-hidden hover:transform">
-                <h2 className="text-2xl text-center font-bold mb-4">Addresses</h2>
-                {addresses.length > 0 ? (
-                  addresses.map((addr, index) => (
-                    <div key={index} className="mb-4">
-                      <p><strong>Street:</strong> {addr.street}</p>
-                      <p><strong>Landmark:</strong> {addr.landmark}</p>
-                      <p><strong>City:</strong> {addr.city}</p>
-                      <p><strong>State:</strong> {addr.state}</p>
-                      <p><strong>Postal Code:</strong> {addr.postalCode}</p>
-                      <p><strong>Country:</strong> {addr.country}</p>
-                      <div className="flex gap-2 mt-2">
-                        <button onClick={() => handleEditAddress(addr)} className="bg-yellow-500 text-white px-2 py-1 rounded-lg hover:bg-yellow-700">Edit</button>
-                        <button onClick={() => handleDeleteAddress(addr._id)} className="bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-700">Delete</button>
+            {/* Address Section */}
+            <div className="lg:w-1/3">
+              <div className="backdrop-blur-sm bg-white/80 rounded-2xl shadow-xl p-6 border border-gray-100">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800">Addresses</h2>
+                  <button 
+                    onClick={handleAddAddress} 
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-full hover:shadow-lg transform hover:-translate-y-0.5 transition duration-200"
+                  >
+                    Add New
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {addresses.length > 0 ? (
+                    addresses.map((addr, index) => (
+                      <div key={index} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition duration-200">
+                        <div className="space-y-2">
+                          <p className="font-medium text-gray-800">{addr.street}</p>
+                          <p className="text-gray-600 text-sm">{addr.landmark}</p>
+                          <p className="text-gray-600 text-sm">
+                            {addr.city}, {addr.state} {addr.postalCode}
+                          </p>
+                          <p className="text-gray-600 text-sm">{addr.country}</p>
+                        </div>
+                        <div className="flex gap-2 mt-4">
+                          <button 
+                            onClick={() => handleEditAddress(addr)} 
+                            className="flex-1 bg-amber-500 text-white px-3 py-1.5 rounded-full text-sm hover:bg-amber-600 transition duration-200"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteAddress(addr._id)} 
+                            className="flex-1 bg-red-500 text-white px-3 py-1.5 rounded-full text-sm hover:bg-red-600 transition duration-200"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                      <hr className="mt-2" />
-                    </div>
-                  ))
-                ) : (
-                  <p>No addresses found.</p>
-                )}
-                <button onClick={handleAddAddress} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add Address</button>
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-500 py-4">No addresses found</p>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="flex-1 grid grid-cols-1 gap-6">
-              <div className="flex flex-col gap-6">
+            {/* Orders Section */}
+            <div className="lg:w-2/3">
+              <div className="space-y-6">
                 {aggregatedPurchases.map((purchase) => (
-                  <div key={purchase._id} className={`bg-white shadow-md rounded-lg overflow-hidden hover:transform hover:scale-105 ${deletingPurchaseId === purchase._id ? 'opacity-50' : ''}`}>
-                    <div className="px-4 py-2 flex">
-                      <div className="flex-shrink-0 overflow-hidden rounded-lg">
-                        <img src={purchase.bookimageUrl} alt={purchase.bookTitle} className="w-32 h-36 hover:transform hover:scale-110 object-cover rounded-lg" />
+                  <div key={purchase._id} className="backdrop-blur-sm bg-white/80 rounded-2xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition duration-300">
+                    <div className="p-6 flex gap-6">
+                      <div className="flex-shrink-0">
+                        <img 
+                          src={purchase.bookimageUrl} 
+                          alt={purchase.bookTitle} 
+                          className="w-40 h-48 object-cover rounded-lg shadow-md hover:scale-105 transition duration-300" 
+                        />
                       </div>
-                      <div className="ml-4 flex justify-between">
-                        <div>
-                          <h2 className="text-xl font-semibold mb-2">{purchase.bookTitle}</h2>
-                          <p className="text-gray-700"><strong>Purchased Date:</strong> {new Date(purchase.purchasedDate).toLocaleDateString()}</p>
-                          <p className="text-gray-700 mb-1"><strong>Quantity:</strong> {purchase.quantity}</p>
-                          <p className="text-gray-700 mb-1"><strong>Total Price:</strong> ${purchase.totalPrice}</p>
+                      <div className="flex-1 space-y-4">
+                        <h2 className="text-2xl font-bold text-gray-800">{purchase.bookTitle}</h2>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-gray-50 rounded-lg p-3">
+                            <p className="text-sm text-gray-500">Purchase Date</p>
+                            <p className="font-medium">{new Date(purchase.purchasedDate).toLocaleDateString()}</p>
+                          </div>
+                          <div className="bg-gray-50 rounded-lg p-3">
+                            <p className="text-sm text-gray-500">Quantity</p>
+                            <p className="font-medium">{purchase.quantity} units</p>
+                          </div>
+                          <div className="bg-gray-50 rounded-lg p-3 col-span-2">
+                            <p className="text-sm text-gray-500">Total Amount</p>
+                            <p className="text-2xl font-bold text-blue-600">${purchase.totalPrice}</p>
+                          </div>
                         </div>
-                        {/* <button onClick={() => handleDelete(purchase._id)} className="bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-700">Delete</button> */}
                       </div>
                     </div>
                   </div>
@@ -279,10 +317,13 @@ const MyOrders = () => {
         </div>
       </div>
 
+      {/* Modal - Update with new styling */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4">{editingAddress ? 'Edit Address' : 'Add Address'}</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 transform transition-all">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">
+              {editingAddress ? 'Edit Address' : 'Add New Address'}
+            </h2>
             <form onSubmit={handleSaveAddress} className="grid grid-cols-1 gap-4">
               <div className="">
                 <div>

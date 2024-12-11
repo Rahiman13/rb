@@ -6,88 +6,116 @@ import FeedbackModal from '../Navbar/Feedbackmodal';
 export default function Component() {
     const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
+    const navigationLinks = ["Home", "Bestsellers", "Categories", "About Us"];
+    const socialLinks = [
+        { Icon: FacebookIcon, href: "#", label: "Facebook" },
+        { Icon: TwitterIcon, href: "#", label: "Twitter" },
+        { Icon: InstagramIcon, href: "#", label: "Instagram" },
+        { Icon: LinkedinIcon, href: "https://www.linkedin.com/in/rahiman-shaik/", label: "LinkedIn" },
+        { Icon: GithubIcon, href: "https://github.com/Rahiman13", label: "GitHub" }
+    ];
 
-    const handleFeedbackClick = () => {
-        setShowFeedbackModal(true);
-    };
     return (
-        <footer className="bg-[#000080] py-4 md:py-8 lg:py-5 dark:bg-[#000080] z-999">
-            <div className="container mx-auto px-4 md:px-6 lg:px-8">
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-                    <div className="flex flex-col items-start">
-                        <h1 className="font-cursive text-white text-5xl">Books Adda</h1>
-                        <p className="mt-4 text-gray-500 dark:text-gray-400">
-                            Dive into the world of books with us. Discover new authors, genres, and captivating stories.
+        <footer className="relative">
+            {/* Fancy Background */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-blue-950 via-indigo-900 to-blue-900">
+                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+            </div>
+
+            {/* Main Content */}
+            <div className="container mx-auto px-6 py-12 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                    {/* Brand Section */}
+                    <div className="space-y-4">
+                        <h1 className="font-cursive text-5xl bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent 
+                                     animate-gradient-x backdrop-blur-sm">
+                            Books Adda
+                        </h1>
+                        <p className="text-gray-300 text-sm leading-relaxed max-w-xs">
+                            Discover new authors, genres, and captivating stories in our carefully curated collection.
                         </p>
                     </div>
-                    <div className='py-8'>
-                        <h4 className="mb-4 text-lg font-bold text-gray-900 dark:text-gray-50">Navigation</h4>
-                        <nav className="space-y-2 flex flex-col">
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="#">
-                                Home
-                            </a>
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="#">
-                                Bestsellers
-                            </a>
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="#">
-                                Categories
-                            </a>
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="#">
-                                About Us
-                            </a>
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="#" onClick={handleFeedbackClick}>
-                                Contact
-                            </a>
+
+                    {/* Navigation */}
+                    <div>
+                        <h4 className="text-white font-bold mb-6 text-lg relative group">
+                            Quick Links
+                            <span className="absolute -bottom-2 left-0 w-12 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+                        </h4>
+                        <nav className="grid gap-3">
+                            {navigationLinks.map(item => (
+                                <a key={item} 
+                                   className="text-gray-300 hover:text-white text-sm flex items-center gap-3 group transition-all duration-300" 
+                                   href="#">
+                                    <span className="w-1.5 h-1.5 bg-blue-400 rounded-full transition-all duration-300 
+                                                   group-hover:w-3 group-hover:bg-blue-300"></span>
+                                    {item}
+                                </a>
+                            ))}
                         </nav>
                     </div>
-                    <div className='py-8'>
-                        <h4 className="mb-4 text-lg font-bold text-gray-900 dark:text-gray-50">Contact</h4>
-                        <div className="space-y-2">
-                            <div className="flex items-center">
-                                <InboxIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                                <a className="ml-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="mailto:info@booksadda.com">
+
+                    {/* Contact */}
+                    <div>
+                        <h4 className="text-white font-bold mb-6 text-lg relative group">
+                            Contact
+                            <span className="absolute -bottom-2 left-0 w-12 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+                        </h4>
+                        <div className="space-y-4">
+                            <a href="mailto:rahimanshaik13@gmail.com" 
+                               className="text-sm text-gray-300 hover:text-white flex items-center gap-3 group transition-all duration-300">
+                                <InboxIcon className="h-4 w-4 group-hover:text-blue-400" />
+                                <span className="hover:translate-x-1 transition-transform duration-300">
                                     rahimanshaik13@gmail.com
-                                </a>
-                            </div>
-                            <div className="flex items-center">
-                                <PhoneIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                                <a className="ml-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="tel:+917995436372">
+                                </span>
+                            </a>
+                            <a href="tel:+917995436372" 
+                               className="text-sm text-gray-300 hover:text-white flex items-center gap-3 group transition-all duration-300">
+                                <PhoneIcon className="h-4 w-4 group-hover:text-blue-400" />
+                                <span className="hover:translate-x-1 transition-transform duration-300">
                                     +91 799-543-6372
-                                </a>
-                            </div>
+                                </span>
+                            </a>
                         </div>
                     </div>
-                    <div className='py-8'>
-                        <h4 className="mb-4 text-lg font-bold text-gray-900 dark:text-gray-50">Follow Us</h4>
-                        <div className="flex space-x-4">
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="#">
-                                <FacebookIcon className="h-6 w-6" />
-                            </a>
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="#">
-                                <TwitterIcon className="h-6 w-6" />
-                            </a>
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="#">
-                                <InstagramIcon className="h-6 w-6" />
-                            </a>
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="www.linkedin.com/in/rahiman-shaik">
-                                <LinkedinIcon className="h-6 w-6" />
-                            </a>
-                            <a className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50" href="https://github.com/Rahiman13" target='blank'>
-                                <GithubIcon className="h-6 w-6" />
-                            </a>
+
+                    {/* Social */}
+                    <div>
+                        <h4 className="text-white font-bold mb-6 text-lg relative group">
+                            Connect
+                            <span className="absolute -bottom-2 left-0 w-12 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+                        </h4>
+                        <div className="flex gap-5">
+                            {socialLinks.map(({ Icon, href, label }) => (
+                                <a key={label}
+                                   href={href}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className="text-gray-300 hover:text-white transition-all duration-300 hover:-translate-y-1 hover:scale-110"
+                                   aria-label={label}>
+                                    <Icon className="h-5 w-5" />
+                                </a>
+                            ))}
                         </div>
                     </div>
                 </div>
+
+                {/* Copyright */}
+                <div className="mt-12 pt-8 border-t border-white/10">
+                    <div className="text-center text-sm text-gray-400">
+                        <span className="bg-gradient-to-r from-white to-blue-300 bg-clip-text text-transparent">
+                            © 2024 Books Adda
+                        </span>
+                        <span className="mx-2">•</span>
+                        <span className="hover:text-white transition-colors duration-300">
+                            All Rights Reserved
+                        </span>
+                    </div>
+                </div>
             </div>
-            <div className="p-1 text-center text-gray-100 dark:text-gray-100">
-                <span>© 2024 Copyright: </span>
-                <a
-                    className="font-semibold text-neutral-100 dark:text-neutral-100"
-                    href="/"
-                >
-                    Books Adda
-                </a>
-            </div>
+            
+            {showFeedbackModal && <FeedbackModal onClose={() => setShowFeedbackModal(false)} />}
         </footer>
     );
 }
